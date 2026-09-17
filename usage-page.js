@@ -118,8 +118,6 @@
         }
 
         form.addEventListener('submit', function (event) {
-            var hasDepartment = form.querySelector('input[name="DepartmentIds"]:checked') !== null;
-            var hasVendor = form.querySelector('input[name="VendorIds"]:checked') !== null;
             var hasCampaign = form.querySelector('input[name="CampaignIds"]:checked') !== null;
             var fromValue = form.querySelector('input[name="From"]').value;
             var toValue = form.querySelector('input[name="To"]').value;
@@ -130,9 +128,9 @@
                 return;
             }
 
-            if (!hasDepartment && !hasVendor && !hasCampaign) {
+            if (!hasCampaign) {
                 event.preventDefault();
-                showErrorNotification('No department, vendor, campaign selected');
+                showErrorNotification('No campaign selected');
                 return;
             }
 
@@ -173,233 +171,93 @@
         var vendorInputs = Array.from(vendorPanel.querySelectorAll('input[name="VendorIds"]'));
         var campaignInputs = Array.from(campaignPanel.querySelectorAll('input[name="CampaignIds"]'));
         var selectAllInputs = Array.from(document.querySelectorAll('input[data-select-all="true"]'));
-        var isApplyingCascade = false;
 
-        var departmentToVendorMap = new Map();
-        var vendorToDepartmentMap = new Map();
-
-        function getSelectedValues(inputs) {
-            return new Set(inputs.filter(function (input) { return input.checked; }).map(function (input) { return Number(input.value); }));
+        function selectedIds(inputs) {
+            return new Set(inputs.filter(function (input) {
+                return input.checked;
+            }).map(function (input) {
+                return Number(input.value);
+            }));
         }
 
-        function addMapValue(map, key, value) {
-            if (!map.has(key)) {
-                map.set(key, new Set());
-            }
-
-            map.get(key).add(value);
-        }
-
-        function applyVisibility(input, shouldShow) {
+        function setVisible(input, visible) {
             var option = input.closest('.ms-option');
             if (!option) {
-                return false;
+                return;
             }
 
-            option.hidden = !shouldShow;
-
-            if (!shouldShow && input.checked) {
+            option.hidden = !visible;
+            if (!visible) {
                 input.checked = false;
-                return true;
-            }
-
-            return false;
-        }
-
-        function handleSelectionChange(input) {
-            if (!input || input.hasAttribute('data-select-all')) {
-                return;
-            }
-
-            if (input.name === 'DepartmentIds' && input.checked) {
-                var departmentId = Number(input.value);
-                var relatedVendors = departmentToVendorMap.get(departmentId) || new Set();
-
-                vendorInputs.forEach(function (vendorInput) {
-                    if (relatedVendors.has(Number(vendorInput.value))) {
-                        vendorInput.checked = true;
-                    }
-                });
-
-                campaignInputs.forEach(function (campaignInput) {
-                    if (Number(campaignInput.dataset.departmentId) === departmentId) {
-                        campaignInput.checked = true;
-                    }
-                });
-            }
-            else if (input.name === 'DepartmentIds' && !input.checked) {
-                var deselectedDepartmentId = Number(input.value);
-
-                campaignInputs.forEach(function (campaignInput) {
-                    if (Number(campaignInput.dataset.departmentId) === deselectedDepartmentId) {
-                        campaignInput.checked = false;
-                    }
-                });
-
-                vendorInputs.forEach(function (vendorInput) {
-                    var vendorId = Number(vendorInput.value);
-                    var stillRelatedToDepartment = departmentInputs.some(function (departmentInput) {
-                        return departmentInput.checked &&
-                            (departmentToVendorMap.get(Number(departmentInput.value)) || new Set()).has(vendorId);
-                    });
-
-                    if (!stillRelatedToDepartment) {
-                        vendorInput.checked = false;
-                    }
-                });
-            }
-            else if (input.name === 'VendorIds' && input.checked) {
-                var vendorId = Number(input.value);
-
-                campaignInputs.forEach(function (campaignInput) {
-                    if (Number(campaignInput.dataset.vendorId) === vendorId) {
-                        campaignInput.checked = true;
-                    }
-                });
-            }
-            else if (input.name === 'VendorIds' && !input.checked) {
-                var deselectedVendorId = Number(input.value);
-
-                campaignInputs.forEach(function (campaignInput) {
-                    if (Number(campaignInput.dataset.vendorId) === deselectedVendorId) {
-                        campaignInput.checked = false;
-                    }
-                });
-            }
-        }
-
-        function handleSelectAllChange(selectAllInput) {
-            var panel = selectAllInput.closest('.ms-panel');
-            if (!panel) {
-                return;
-            }
-
-            var optionInputs = Array.from(
-                panel.querySelectorAll('input[type="checkbox"]:not([data-select-all])')
-            );
-
-            optionInputs.forEach(function (optionInput) {
-                var option = optionInput.closest('.ms-option');
-                if (option && !option.hidden) {
-                    optionInput.checked = selectAllInput.checked;
-                }
-            });
-
-            if (selectAllInput.checked && panel === departmentPanel) {
-                departmentInputs.forEach(function (departmentInput) {
-                    handleSelectionChange(departmentInput);
-                });
-            }
-            else if (selectAllInput.checked && panel === vendorPanel) {
-                vendorInputs.forEach(function (vendorInput) {
-                    handleSelectionChange(vendorInput);
-                });
-            }
-            else if (!selectAllInput.checked && panel === departmentPanel) {
-                departmentInputs.forEach(function (departmentInput) {
-                    handleSelectionChange(departmentInput);
-                });
-            }
-            else if (!selectAllInput.checked && panel === vendorPanel) {
-                vendorInputs.forEach(function (vendorInput) {
-                    handleSelectionChange(vendorInput);
-                });
             }
         }
 
         function syncSelectAll(selectAllInput) {
             var panel = selectAllInput.closest('.ms-panel');
-            if (!panel) {
-                return;
-            }
-
-            var optionInputs = Array.from(panel.querySelectorAll('input[type="checkbox"]:not([data-select-all])'));
-            var visibleInputs = optionInputs.filter(function (input) {
-                var option = input.closest('.ms-option');
-                return option && !option.hidden;
-            });
-            var selectedVisibleCount = visibleInputs.filter(function (input) {
-                return input.checked;
-            }).length;
+            var visibleInputs = Array.from(panel.querySelectorAll('input[type="checkbox"]:not([data-select-all])'))
+                .filter(function (input) {
+                    var option = input.closest('.ms-option');
+                    return option && !option.hidden;
+                });
+            var selectedCount = visibleInputs.filter(function (input) { return input.checked; }).length;
 
             selectAllInput.disabled = visibleInputs.length === 0;
-            selectAllInput.checked =
-                visibleInputs.length > 0 &&
-                selectedVisibleCount === visibleInputs.length;
-            selectAllInput.indeterminate =
-                selectedVisibleCount > 0 &&
-                selectedVisibleCount < visibleInputs.length;
+            selectAllInput.checked = visibleInputs.length > 0 && selectedCount === visibleInputs.length;
+            selectAllInput.indeterminate = selectedCount > 0 && selectedCount < visibleInputs.length;
+        }
+
+        function refreshCascade() {
+            var departmentIds = selectedIds(departmentInputs);
+
+            vendorInputs.forEach(function (vendorInput) {
+                var relatedDepartments = (vendorInput.dataset.departmentIds || '')
+                    .split(',')
+                    .filter(Boolean)
+                    .map(Number);
+                var visible = departmentIds.size > 0 &&
+                    relatedDepartments.some(function (id) { return departmentIds.has(id); });
+                setVisible(vendorInput, visible);
+            });
+
+            var vendorIds = selectedIds(vendorInputs);
+            campaignInputs.forEach(function (campaignInput) {
+                var departmentId = Number(campaignInput.dataset.departmentId);
+                var vendorId = Number(campaignInput.dataset.vendorId);
+                var departmentMatches = departmentIds.size > 0 && departmentIds.has(departmentId);
+                var vendorMatches = vendorIds.size > 0 && vendorIds.has(vendorId);
+                setVisible(campaignInput, departmentMatches && vendorMatches);
+            });
+
+            selectAllInputs.forEach(syncSelectAll);
+            updateAllDropdownSummaries();
         }
 
         selectAllInputs.forEach(function (selectAllInput) {
             selectAllInput.addEventListener('change', function () {
-                handleSelectAllChange(selectAllInput);
-
                 var panel = selectAllInput.closest('.ms-panel');
-                if (panel) {
-                    panel.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-                updateAllDropdownSummaries();
+                Array.from(panel.querySelectorAll('input[type="checkbox"]:not([data-select-all])'))
+                    .forEach(function (input) {
+                        var option = input.closest('.ms-option');
+                        if (option && !option.hidden) {
+                            input.checked = selectAllInput.checked;
+                        }
+                    });
+                refreshCascade();
             });
         });
 
         [departmentPanel, vendorPanel, campaignPanel].forEach(function (panel) {
             panel.addEventListener('change', function (event) {
-                handleSelectionChange(event.target);
-                selectAllInputs.forEach(syncSelectAll);
-                updateAllDropdownSummaries();
+                if (!event.target.hasAttribute('data-select-all')) {
+                    refreshCascade();
+                }
             });
         });
 
-        campaignInputs.forEach(function (campaignInput) {
-            var departmentId = Number(campaignInput.dataset.departmentId);
-            var vendorId = Number(campaignInput.dataset.vendorId);
-
-            if (!Number.isFinite(departmentId) || departmentId <= 0 || !Number.isFinite(vendorId) || vendorId <= 0) {
-                return;
-            }
-
-            addMapValue(departmentToVendorMap, departmentId, vendorId);
-            addMapValue(vendorToDepartmentMap, vendorId, departmentId);
-        });
-
-        function cascadeOptions() {
-            if (isApplyingCascade) {
-                return;
-            }
-
-            isApplyingCascade = true;
-
-            try {
-                [departmentInputs, vendorInputs, campaignInputs].forEach(function (inputs) {
-                    inputs.forEach(function (input) {
-                        var option = input.closest('.ms-option');
-                        if (option) {
-                            option.hidden = false;
-                        }
-                    });
-                });
-
-                departmentPanel.dispatchEvent(new Event('change', { bubbles: true }));
-                vendorPanel.dispatchEvent(new Event('change', { bubbles: true }));
-                campaignPanel.dispatchEvent(new Event('change', { bubbles: true }));
-
-                selectAllInputs.forEach(syncSelectAll);
-                updateAllDropdownSummaries();
-            }
-            finally {
-                isApplyingCascade = false;
-            }
-        }
-
-        departmentPanel.addEventListener('change', cascadeOptions);
-        vendorPanel.addEventListener('change', cascadeOptions);
-
-        cascadeOptions();
-        updateAllDropdownSummaries();
+        refreshCascade();
 
         return {
-            cascadeOptions: cascadeOptions
+            cascadeOptions: refreshCascade
         };
     }
 
