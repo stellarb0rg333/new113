@@ -71,9 +71,9 @@ public class UsageController : Controller
         {
             model.ErrorMessage = "Both From and To date must be specified";
         }
-        else if (filter.DepartmentIds.Count == 0 && filter.VendorIds.Count == 0 && filter.CampaignIds.Count == 0)
+        else if (filter.CampaignIds.Count == 0)
         {
-            model.ErrorMessage = "No department, vendor, campaign selected";
+            model.ErrorMessage = "No campaign selected";
         }
         // Campaign-only filtering (Department x, Vendor x, Campaign ✓) is now a valid standalone filter state.
 
@@ -88,9 +88,9 @@ public class UsageController : Controller
         var records = await _usageService.GetUsageRecordsAsync(
             new UsageFilterRequest
             {
-                DepartmentIds = filter.DepartmentIds ?? new List<int>(),
+                DepartmentIds = new List<int>(),
                 CampaignIds = filter.CampaignIds ?? new List<int>(),
-                VendorIds = filter.VendorIds ?? new List<int>(),
+                VendorIds = new List<int>(),
                 From = filter.From,
                 To = filter.To,
                 GreylabsRatePerMinute = filter.GreylabsRatePerMinute,
@@ -203,9 +203,9 @@ public class UsageController : Controller
 
         var repositoryFilter = new UsageFilterRequest
         {
-            DepartmentIds = filter.DepartmentIds,
+            DepartmentIds = new List<int>(),
             CampaignIds = filter.CampaignIds,
-            VendorIds = filter.VendorIds,
+            VendorIds = new List<int>(),
             From = filter.From,
             To = filter.To,
             GreylabsRatePerMinute = filter.GreylabsRatePerMinute,
