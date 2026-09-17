@@ -100,7 +100,7 @@ public class UsageController : Controller
             cancellationToken);
 
         var csv = new StringBuilder();
-        csv.AppendLine("Dept,Campaign,Vendor,Unique Base,Total Attempts,Attempt Intensity,Unique Connects,Total Connects,Connect Intensity,Duration (s),Billable Minutes,Running Cost (₹ incl. GST),Monthly Budget (₹),Applicable Time Budget (₹),Budget Burn (%),Expected Time Coverage (%),Pace (%),Budget Burn Status");
+        csv.AppendLine("Dept,Campaign,Vendor,Unique Base,Total Attempts,Attempt Intensity,Unique Connects,Total Connects,Connect Intensity,MOU,Billable Minutes,Running Cost (₹ incl. GST),Monthly Budget (₹),Applicable Time Budget (₹),Budget Burn (%),Expected Time Coverage (%),Pace (%),Budget Burn Status");
 
         foreach (var row in records)
         {
