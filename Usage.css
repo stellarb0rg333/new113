@@ -1,0 +1,1166 @@
+/* ── Page shell ────────────────────────────────────────────── */
+.voicebot-page-shell {
+    min-height: calc(100vh - 4.5rem);
+    position: relative;
+    /* Keep sticky headers compatible: avoid full-shell isolation and scope layering via z-index. */
+    isolation: auto;
+    overflow: visible;
+    background: rgba(252, 240, 235, 1);
+}
+
+    /* Keep watermark fixed in viewport while content scrolls over it. */
+    .voicebot-page-shell::before {
+        content: "";
+        position: fixed;
+        left: 0px;
+        bottom: -0.75rem;
+        width: min(48vw, 620px);
+        height: min(64vh, 520px);
+        transform: translateX(0);
+        background-image: url("https://companieslogo.com/img/orig/PEL.NS-491465ee.png?t=1720244493");
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: contain;
+        opacity: 0.3;
+        filter: sepia(18%) saturate(86%) hue-rotate(-8deg);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+.voicebot-page-content {
+    margin-top: 0;
+    padding: 0.5rem 1.25rem 1.5rem;
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+}
+
+.usage-row-count {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666;
+}
+
+.usage-export-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+}
+
+.usage-export-button {
+    display: inline-block;
+    color: #fff;
+    background: #2563eb;
+    border: 1px solid #1d4ed8;
+    border-radius: 5px;
+    padding: 0.5rem 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.usage-export-button:hover {
+    color: #fff;
+    background: #1d4ed8;
+}
+
+.usage-notification-host {
+    position: fixed;
+    top: 5.25rem;
+    right: 1rem;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+}
+
+.usage-notification {
+    width: fit-content;
+    min-width: 0;
+    max-width: min(380px, calc(100vw - 2rem));
+    padding: 0.75rem 0.95rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-md);
+    font-size: 0.86rem;
+    font-weight: 600;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.6rem;
+    pointer-events: auto;
+}
+
+    .usage-notification.is-hiding {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+.usage-notification-error {
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.usage-notification-success {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.usage-notification-fetching {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.usage-notification-text {
+    flex: 1;
+}
+
+.usage-notification-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 0.05rem;
+}
+
+    .usage-notification-close:hover {
+        opacity: 0.75;
+    }
+
+/* ── Main card ─────────────────────────────────────────────── */
+.voicebot-card {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0.75rem 0 0.01rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    .voicebot-card h1 {
+        margin: 0 0 0.2rem;
+        color: #2d4059;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .voicebot-card > p {
+        color: var(--gray-600);
+        margin: 0 0 1.25rem;
+        font-size: 0.875rem;
+    }
+
+/* ── Filter form ───────────────────────────────────────────── */
+.voicebot-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(110px, 0.6fr)) 245px 245px 80px 80px 80px max-content;
+    gap: 1rem;
+    align-items: end;
+    background: #fff8f5;
+    border: 1px solid #f5dfd5;
+    border-radius: calc(var(--border-radius) - 2px);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Vendor charge inputs */
+.greylabs-rate-field {
+    grid-column: auto;
+    grid-row: auto;
+    width: max-content;
+}
+
+.fogteams-rate-field {
+    grid-column: auto;
+    grid-row: auto;
+    width: max-content;
+}
+
+.gnani-rate-field {
+    grid-column: auto;
+    grid-row: auto;
+    width: max-content;
+}
+
+/* Keep Clear / Filter buttons content-sized. */
+.voicebot-filter-actions {
+    grid-column: auto;
+    grid-row: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 0;
+    width: max-content;
+}
+
+/* Let the three selection fields expand into the available filter-row width. */
+.voicebot-filter-field-compact {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+}
+
+    .voicebot-filter-field-compact .ms-dropdown {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .voicebot-filter-field-compact .ms-trigger {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .voicebot-filter-field-compact .ms-summary {
+        flex: 1 1 auto;
+        width: 0;
+        min-width: 0;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .voicebot-filter-field-compact .ms-chevron {
+        flex: 0 0 auto;
+    }
+
+/* ── Filter fields ─────────────────────────────────────────── */
+.voicebot-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+    .voicebot-filter-field > span {
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    /* ── Shared base for native date inputs ───────────────────── */
+    .voicebot-filter-field input[type="datetime-local"] {
+        width: 100%;
+        box-sizing: border-box;
+        background: #fff;
+        border: 1.5px solid var(--gray-200);
+        border-radius: 6px;
+        padding: 0.5rem 0.625rem;
+        color: var(--gray-700);
+        font-size: 0.875rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+        .voicebot-filter-field input[type="datetime-local"]:hover {
+            border-color: var(--gray-400);
+        }
+
+        .voicebot-filter-field input[type="datetime-local"]:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .voicebot-filter-field input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            padding: 0.2rem 0.25rem 0.2rem 0.1rem;
+            margin: 0;
+        }
+
+    /* ── Vendor charge inputs ─────────────────────────────────── */
+    .voicebot-filter-field input[type="number"] {
+        background: #fff;
+        border: 1.5px solid var(--gray-200);
+        border-radius: 6px;
+        padding: 0.5rem 0.625rem;
+        color: var(--gray-700);
+        font-size: 0.875rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+        .voicebot-filter-field input[type="number"]:hover {
+            border-color: var(--gray-400);
+        }
+
+        .voicebot-filter-field input[type="number"]:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+/* Make vendor rate inputs compact. */
+.greylabs-rate-field input[type="number"],
+.fogteams-rate-field input[type="number"],
+.gnani-rate-field input[type="number"] {
+    width: 90px;
+    box-sizing: border-box;
+}
+
+/* ── Filter button ─────────────────────────────────────────── */
+.voicebot-filter-actions button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+#usageClearButton {
+    background: #e8380d;
+    box-shadow: 0 1px 4px rgba(232, 56, 13, 0.28);
+}
+
+    #usageClearButton:hover {
+        background: #c72e09;
+        box-shadow: 0 3px 8px rgba(232, 56, 13, 0.38);
+        transform: translateY(-1px);
+    }
+
+    #usageClearButton:active {
+        background: #a5250a;
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(232, 56, 13, 0.2);
+    }
+
+#usageFilterButton {
+    background: #2563eb;
+    box-shadow: 0 1px 4px rgba(37, 99, 235, 0.28);
+}
+
+    #usageFilterButton:hover {
+        background: #1d4ed8;
+        box-shadow: 0 3px 8px rgba(37, 99, 235, 0.38);
+        transform: translateY(-1px);
+    }
+
+    #usageFilterButton:active {
+        background: #1e40af;
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+    }
+
+/* ── Responsive filter layout ─────────────────────────────── */
+@media (max-width: 1450px) {
+    .voicebot-filter-grid {
+        grid-template-columns:
+            repeat(3, minmax(110px, 0.6fr))
+            repeat(2, minmax(0, 1.55fr))
+            repeat(3, minmax(80px, 0.8fr))
+            max-content;
+    }
+
+    /*
+    Reset the explicit desktop positions so the fields
+    can flow naturally on smaller screens.
+    */
+    .greylabs-rate-field,
+    .fogteams-rate-field,
+    .gnani-rate-field,
+    .voicebot-filter-actions {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+    }
+
+    /* Keep the selection controls aligned with their responsive grid tracks. */
+    .voicebot-filter-field-compact {
+        min-width: 0;
+        width: 100%;
+        max-width: none;
+    }
+
+        .voicebot-filter-field-compact .ms-dropdown {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+        }
+
+        .voicebot-filter-field-compact .ms-trigger {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+            box-sizing: border-box;
+        }
+
+        .voicebot-filter-field-compact .ms-summary {
+            flex: 1 1 auto;
+            width: 0;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    .greylabs-rate-field input[type="number"],
+    .fogteams-rate-field input[type="number"],
+    .gnani-rate-field input[type="number"] {
+        width: 100%;
+    }
+
+    .voicebot-filter-actions button {
+        flex: 1 1 0;
+    }
+}
+
+/* ── Custom multi-select dropdown ─────────────────────────── */
+.ms-dropdown {
+    position: relative;
+}
+
+/* The visible trigger button */
+.ms-trigger {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 0.5rem 0.625rem 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    text-align: left;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+    .ms-trigger:hover {
+        border-color: var(--gray-400);
+    }
+
+    .ms-trigger[aria-expanded="true"],
+    .ms-trigger:focus-visible {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+.ms-summary {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Chevron arrow — rotates when open */
+.ms-chevron {
+    flex-shrink: 0;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--gray-400);
+    transition: transform 0.18s;
+}
+
+.ms-trigger[aria-expanded="true"] .ms-chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel of checkboxes */
+.ms-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: auto;
+    /* Keep trigger width unchanged; size only the opened panel. */
+    background: #fff;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 6px;
+    box-shadow: var(--shadow-md);
+    z-index: 200;
+    max-height: none;
+    overflow-y: visible;
+    padding: 0.3rem 0;
+    width: 270px;
+}
+
+#departmentDropdown .ms-panel {
+    width: 210px;
+}
+
+#vendorDropdown .ms-panel {
+    width: 150px;
+}
+
+#campaignDropdown .ms-panel {
+    width: 270px;
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.usage-results-table tbody td {
+    font-size: 0.8rem !important;
+}
+
+.ms-option {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    transition: background 0.1s;
+    user-select: none;
+}
+
+    .ms-option[hidden] {
+        display: none !important;
+    }
+
+    .ms-option:hover {
+        background: #eff6ff;
+    }
+
+    .ms-option input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        cursor: pointer;
+        accent-color: var(--primary-blue);
+        margin: 0;
+    }
+
+        /* Bold + blue text label when an item is checked */
+        .ms-option input[type="checkbox"]:checked + span {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+/* ── Results table ─────────────────────────────────────────── */
+.voicebot-table-wrap {
+    /*
+    Keep scrollbar below headers: only tbody scrolls, header stays
+    outside the scroll region.
+
+    A right-hand gutter is reserved so the scrollbar renders clearly
+    outside the table's columns rather than overlapping/touching them.
+    */
+    position: relative;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+    background: rgba(255, 255, 255, 0.6);
+    padding-right: 0;
+}
+
+  .voicebot-table-wrap tbody {
+      display: block;
+      max-height: 510px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-color: #9ca3af transparent;
+      scrollbar-width: thin;
+  }
+
+  .voicebot-table-wrap tbody::-webkit-scrollbar {
+      width: 0.7rem;
+  }
+
+  .voicebot-table-wrap tbody::-webkit-scrollbar-track {
+      background: transparent;
+  }
+
+  .voicebot-table-wrap tbody::-webkit-scrollbar-thumb {
+      background: #9ca3af;
+      border: 2px solid transparent;
+      border-radius: 999px;
+  }
+
+  .voicebot-table-wrap tbody::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+  }
+
+    .voicebot-table-wrap table {
+        width: 100%;
+        min-width: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.75rem;
+        /* Change font size of the table contents. */
+        table-layout: auto;
+    }
+
+    .voicebot-table-wrap thead,
+    .voicebot-table-wrap tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .voicebot-table-wrap thead tr {
+        background: transparent;
+    }
+
+    .voicebot-table-wrap th {
+        position: static;
+        z-index: 3;
+        background: rgba(176, 216, 232, 0.88) !important;
+        color: #000 !important;
+        padding: 0.42rem 0.1rem;
+        line-height: 1.2;
+        box-sizing: border-box;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: 700;
+        font-size: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        border: none;
+    }
+
+        .voicebot-table-wrap th:not(:last-child) {
+            border-right: 1px solid #fff;
+        }
+
+            .voicebot-table-wrap th:nth-child(2),
+            .voicebot-table-wrap td:nth-child(2) {
+                padding-left: 0.05rem;
+                padding-right: 0.05rem;
+                width: 25%;
+            }
+
+            .voicebot-table-wrap th:nth-child(10),
+            .voicebot-table-wrap td:nth-child(10) {
+                display: none;
+            }
+
+            .voicebot-table-wrap th:nth-child(1),
+            .voicebot-table-wrap td:nth-child(1) {
+                width: 10%;
+                vertical-align: top;
+            }
+
+            .voicebot-table-wrap th:nth-child(1) {
+                padding-top: 0.42rem;
+                padding-bottom: 0.42rem;
+            }
+
+            .voicebot-table-wrap th:nth-child(3),
+            .voicebot-table-wrap td:nth-child(3) {
+                width: 6%;
+            }
+
+            .voicebot-table-wrap th:nth-child(5),
+            .voicebot-table-wrap td:nth-child(5),
+            .voicebot-table-wrap th:nth-child(6),
+            .voicebot-table-wrap td:nth-child(6),
+            .voicebot-table-wrap th:nth-child(7),
+            .voicebot-table-wrap td:nth-child(7),
+            .voicebot-table-wrap th:nth-child(8),
+            .voicebot-table-wrap td:nth-child(8),
+            .voicebot-table-wrap th:nth-child(9),
+            .voicebot-table-wrap td:nth-child(9),
+            .voicebot-table-wrap th:nth-child(11),
+            .voicebot-table-wrap td:nth-child(11),
+            .voicebot-table-wrap th:nth-child(13),
+            .voicebot-table-wrap td:nth-child(13) {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                
+            }
+
+        /*
+    Extend the last header cell's background rightwards to fully fill the
+    wrapper's reserved scrollbar gutter (padding-right above). A plain
+    width/margin change on thead does not work reliably here because the
+    header and body render as independent CSS table boxes, so extra width
+    added to the header gets divided across ALL columns instead of only
+    the last one, leaving a thin white strip. box-shadow paints a solid
+    block of the same header color exactly as wide as the gutter, without
+    altering any column's actual width/alignment with the body below.
+    */
+    .voicebot-table-wrap td {
+        padding: 0.58rem 0.62rem;
+        font-size: 0.68rem !important;
+        color: var(--gray-700);
+        text-align: left !important;
+        border-bottom: 1px solid var(--gray-200);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+        .voicebot-table-wrap td:nth-child(13) {
+            text-align: left !important;
+        }
+
+        .voicebot-table-wrap td:nth-child(12) {
+            text-align: left !important;
+        }
+
+        .voicebot-table-wrap td:nth-child(9) {
+            text-align: center !important;
+        }
+
+        .voicebot-table-wrap td:nth-child(13) {
+            text-align: center !important;
+        }
+
+        .voicebot-table-wrap td:nth-child(14) {
+            text-align: left !important;
+        }
+
+    .voicebot-table-wrap tbody tr {
+        transition: background 0.1s;
+    }
+
+        .voicebot-table-wrap tbody tr:nth-child(even):not(.budget-nearing):not(.budget-exceeded) {
+            background: rgba(255, 244, 239, 0.38);
+        }
+
+        .voicebot-table-wrap tbody tr:hover {
+            background: rgba(255, 228, 214, 0.78);
+        }
+
+        .voicebot-table-wrap tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+.voicebot-empty-row {
+    text-align: center;
+    color: var(--gray-400);
+    font-style: italic;
+    padding: 2rem 0 !important;
+}
+
+/* ── Responsive watermark ─────────────────────────────────── */
+@media (max-width: 768px) {
+    .voicebot-page-shell::before {
+        width: min(60vw, 420px);
+        height: min(42vh, 340px);
+        left: 0;
+        transform: translateX(-0.75rem);
+        bottom: -0.5rem;
+        opacity: 0.12;
+    }
+}
+
+/* ── Usage results ─────────────────────────────────────────── */
+.usage-results-block {
+    width: 100%;
+}
+
+/* Usage results only: keep headers unchanged while widening body text slightly. */
+.voicebot-table-wrap table.usage-results-table th:nth-child(1),
+.voicebot-table-wrap table.usage-results-table td:nth-child(1) {
+    width: 16%;
+}
+
+.voicebot-table-wrap table.usage-results-table th:nth-child(2),
+.voicebot-table-wrap table.usage-results-table td:nth-child(2) {
+    width: 16%;
+}
+
+/* Usage table spacing and sizing refinements. */
+.voicebot-filter-grid {
+    margin-bottom: 0.6rem;
+}
+
+.usage-grand-summary {
+    margin-bottom: 0.45rem;
+}
+
+.voicebot-table-wrap table.usage-results-table th:nth-child(1) {
+    vertical-align: middle;
+    padding-top: 0.42rem;
+    padding-bottom: 0.42rem;
+}
+
+.voicebot-table-wrap table.usage-results-table td {
+    font-size: 0.72rem !important;
+    padding-top: 0.64rem;
+    padding-bottom: 0.64rem;
+}
+
+.usage-grand-summary {
+    margin-bottom: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #d8e2ef;
+    background: linear-gradient( 140deg, rgba(45, 64, 89, 0.08), rgba(232, 56, 13, 0.05) );
+}
+
+.usage-grand-summary-header h2 {
+    margin: 0;
+    color: #2d4059;
+    font-size: 1.05rem;
+}
+
+.usage-grand-summary-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+}
+
+.usage-grand-summary-header p {
+    margin: 0;
+    color: var(--gray-600);
+    font-size: 0.8rem;
+}
+
+/* Total summary grid */
+.usage-grand-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.usage-grand-stat {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #e8edf5;
+    border-radius: 8px;
+    padding: 0.55rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+    .usage-grand-stat span {
+        color: var(--gray-600);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+    }
+
+    .usage-grand-stat strong {
+        color: #1e293b;
+        font-size: 1.25rem;
+        line-height: 1.2;
+    }
+
+    .usage-grand-stat small {
+        color: #475569;
+        font-size: 0.75rem;
+    }
+
+/* ── Campaign budget ───────────────────────────────────────── */
+.campaign-budget-form {
+    display: grid;
+    grid-template-columns: minmax(260px, 2fr) minmax(220px, 1fr) auto;
+    gap: 0.85rem;
+    align-items: end;
+    background: #fff8f5;
+    border: 1px solid #f5dfd5;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.campaign-budget-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+/*
+Vendor Rates form has one extra field
+(Vendor, Rate, Effective From, Update button).
+
+Give it its own 4-column track so all four
+sit on a single row instead of wrapping.
+*/
+.vendor-rate-form {
+    grid-template-columns: minmax(200px, 1.4fr) minmax(160px, 1fr) minmax(200px, 1.2fr) auto;
+}
+
+.campaign-budget-field label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.campaign-budget-field select,
+.campaign-budget-field input {
+    background: #fff;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 0.52rem 0.68rem;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    font-family: inherit;
+}
+
+.campaign-budget-actions button {
+    width: 100%;
+    background: #e8380d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.campaign-budget-error {
+    color: #b42318;
+    font-size: 0.77rem;
+    font-weight: 600;
+}
+
+.campaign-budget-success {
+    margin-bottom: 0.8rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #b7ebc6;
+    background: #ecfdf3;
+    color: #067647;
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.campaign-budget-table th,
+.campaign-budget-table td {
+    width: 50% !important;
+    box-sizing: border-box;
+}
+
+@media (max-width: 860px) {
+    .campaign-budget-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Budget-status row highlighting ───────────────────────── */
+
+/* Exceeded: Running Cost >= 100% of budget */
+.voicebot-table-wrap tbody tr.budget-exceeded {
+    background: #fecaca;
+}
+
+    .voicebot-table-wrap tbody tr.budget-exceeded td {
+        color: #7f1d1d;
+        font-weight: 600;
+    }
+
+    .voicebot-table-wrap tbody tr.budget-exceeded:hover {
+        background: #fecaca;
+    }
+
+/* Nearing: Running Cost >= 75% and < 100% of budget */
+.voicebot-table-wrap tbody tr.budget-nearing {
+    background: #fef08a;
+}
+
+    .voicebot-table-wrap tbody tr.budget-nearing td {
+        color: #713f12;
+        font-weight: 600;
+    }
+
+    .voicebot-table-wrap tbody tr.budget-nearing:hover {
+        background: rgba(255, 228, 214, 0.78);
+    }
+
+    /* CAC is intentionally compact; both independently rendered table boxes need
+       the same explicit width because the body scrolls separately from the header. */
+    .voicebot-table-wrap thead th:nth-child(13),
+    .voicebot-table-wrap tbody td:nth-child(13) {
+        width: 5% !important;
+        min-width: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box;
+    }
+
+    .voicebot-table-wrap tbody tr.budget-exceeded:hover,
+    .voicebot-table-wrap tbody tr.budget-exceeded:hover > td {
+        background: #fecaca !important;
+    }
+
+    .budget-pace {
+        font-size: 0.62rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+    /* Final Usage table contract. The header and scrolling body are separate
+       fixed-layout table boxes, so every visible column gets an explicit width. */
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table {
+        table-layout: fixed !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th,
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td {
+        box-sizing: border-box !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(1),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(1) {
+        width: 18% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(2),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(2) {
+        width: 12% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(3),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(3) {
+        width: 6% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(4),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(4) {
+        width: 7% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(5),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(5),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(6),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(6),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(7),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(7),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(8),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(8),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(9),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(9) {
+        width: 6% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(10),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(10) {
+        display: none !important;
+        width: 0 !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(11),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(11) {
+        width: 7% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(12),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(12) {
+        width: 9% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(13),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(13) {
+        width: 5% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(14),
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td:nth-child(14) {
+        width: 6% !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table th:nth-child(1) {
+        display: table-cell !important;
+        padding-top: 0.55rem !important;
+        padding-bottom: 0.55rem !important;
+        line-height: 1.2 !important;
+        vertical-align: middle !important;
+    }
+
+    .voicebot-card .usage-results-block .voicebot-table-wrap table.usage-results-table td {
+        font-size: 0.72rem !important;
+        padding-top: 0.64rem !important;
+        padding-bottom: 0.64rem !important;
+    }
+
+    .voicebot-card > .voicebot-filter-grid {
+        margin-bottom: 0 !important;
+    }
+
+    .voicebot-card .usage-results-block .usage-grand-summary {
+        margin-top: 0 !important;
+        margin-bottom: 0.2rem !important;
+    }
+
+/* ── Vendor Rates page ────────────────────────────────────── */
+.vendor-rate-block {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .vendor-rate-block h2 {
+        font-size: 1rem;
+        margin: 0 0 0.5rem;
+        color: var(--gray-700);
+    }
+
+.vendor-rate-label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.35rem;
+}
+
+.vendor-rate-current {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.vendor-rate-scheduled,
+.vendor-rate-history {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+    .vendor-rate-scheduled ul,
+    .vendor-rate-history ul {
+        margin: 0.35rem 0 0;
+        padding-left: 1.25rem;
+        color: var(--gray-700);
+    }
+
+    .vendor-rate-scheduled li {
+        color: #713f12;
+        font-weight: 600;
+    }
