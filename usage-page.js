@@ -88,6 +88,29 @@
         window.setTimeout(dismissToast, 5000);
     }
 
+    function showFetchingNotification() {
+        var host = ensureNotificationHost();
+        var toast = document.createElement('div');
+        var text = document.createElement('span');
+        var closeButton = document.createElement('button');
+
+        toast.className = 'usage-notification usage-notification-fetching';
+        toast.setAttribute('role', 'status');
+        text.className = 'usage-notification-text';
+        text.textContent = 'Fetching..';
+        closeButton.type = 'button';
+        closeButton.className = 'usage-notification-close';
+        closeButton.setAttribute('aria-label', 'Close notification');
+        closeButton.textContent = '×';
+        toast.appendChild(text);
+        toast.appendChild(closeButton);
+        host.appendChild(toast);
+
+        closeButton.addEventListener('click', function () {
+            toast.remove();
+        });
+    }
+
     function setupFilterValidation() {
         var form = document.getElementById('usageFilterForm');
         if (!form) {
@@ -114,6 +137,11 @@
             }
 
             // Campaign-only filtering is valid: no department/vendor required in this state.
+            event.preventDefault();
+            showFetchingNotification();
+            window.setTimeout(function () {
+                HTMLFormElement.prototype.submit.call(form);
+            }, 50);
         });
     }
 
