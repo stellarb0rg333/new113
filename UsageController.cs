@@ -165,7 +165,7 @@ public class UsageController : Controller
         var now = DateTime.Now;
         return new UsageFilterInputModel
         {
-            From = now.Date,
+            From = new DateTime(now.Year, now.Month, 1),
             To = now,
             DepartmentIds = new List<int>(),
             CampaignIds = new List<int>(),
