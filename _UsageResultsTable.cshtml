@@ -1,0 +1,242 @@
+@model VoicebotBillingMIS.Models.UsagePageViewModel
+@using VoicebotBillingMIS.Data.Models
+
+@{
+    var rows = Model.UsageRecords;
+    var showGrandSummary = rows.Count > 0;
+
+    var totalAttempts = rows.Sum(r => r.TotalAttempts ?? 0);
+    var totalUniqueBase = rows.Sum(r => r.UniqueBase ?? 0);
+    var totalConnects = rows.Sum(r => r.TotalConnects ?? 0);
+    var totalUniqueConnects = rows.Sum(r => r.UniqueConnects ?? 0);
+    var totalMinutes = rows.Sum(r => r.Mou ?? 0);
+    var totalRunningCost = rows.Sum(r => r.RunningCost ?? 0m);
+
+    // Intensities are recomputed from summed totals.
+    // Averaging individual row ratios would be mathematically incorrect.
+    var grandAttemptIntensity = totalUniqueBase > 0
+        ? (decimal)totalAttempts / totalUniqueBase
+        : 0m;
+
+    var grandConnectIntensity = totalUniqueConnects > 0
+        ? (decimal)totalConnects / totalUniqueConnects
+        : 0m;
+}
+
+<div class="usage-results-block">
+
+    @if (showGrandSummary)
+    {
+        <section class="usage-grand-summary"
+                 aria-label="Grand total summary">
+                 
+
+            <div class="usage-grand-summary-header">
+
+                <h2>Grand Total Summary</h2>
+                <p> </p>
+
+            </div>
+
+
+            <div class="usage-grand-summary-grid">
+
+                <div class="usage-grand-stat">
+                    <span>Total Attempts</span>
+                    <strong>@totalAttempts.ToString("N0")</strong>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Total Unique Base</span>
+                    <strong>@totalUniqueBase.ToString("N0")</strong>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Attempt Intensity</span>
+
+                    <strong>
+                        @grandAttemptIntensity.ToString("F2")
+                    </strong>
+
+                    <small>
+                        @totalAttempts.ToString("N0")
+                        /
+                        @totalUniqueBase.ToString("N0")
+                    </small>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Total Connects</span>
+                    <strong>@totalConnects.ToString("N0")</strong>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Total Unique Connects</span>
+                    <strong>@totalUniqueConnects.ToString("N0")</strong>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Connect Intensity</span>
+
+                    <strong>
+                        @grandConnectIntensity.ToString("F2")
+                    </strong>
+
+                    <small>
+                        @totalConnects.ToString("N0")
+                        /
+                        @totalUniqueConnects.ToString("N0")
+                    </small>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Total Billable Minutes</span>
+                    <strong>@totalMinutes.ToString("N0")</strong>
+                </div>
+
+
+                <div class="usage-grand-stat">
+                    <span>Total Running Cost (₹ incl. GST)</span>
+                    <strong>@totalRunningCost.ToString("N2")</strong>
+                </div>
+
+            </div>
+
+        </section>
+    }
+
+
+    <div class="voicebot-table-wrap">
+
+        <table class="usage-results-table">
+
+            <thead>
+                <tr>
+                    <th>Dept</th>
+                    <th>Campaign</th>
+                    <th>Vendor</th>
+                    <th>Total Attempts</th>
+                    <th>Unique Base</th>
+                    <th>Attempt Intensity</th>
+                    <th>Total Connects</th>
+                    <th>Unique Connects</th>
+                    <th>Connect Intensity</th>
+                    <th>Billable Minutes (MOU)</th>
+                    <th>Running Cost (₹ incl. GST)</th>
+                    <th title="Customer Acquisition Cost">CAC (₹)</th>
+                    <th>Budget Burn Status</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                @if (rows.Count == 0)
+                {
+                    <tr>
+                        <td colspan="13"
+                            class="voicebot-empty-row">
+                            No rows returned.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var row in rows)
+                    {
+                        var rowCss = "";
+                        if (row.BudgetStatus == BudgetStatus.Exceeded)
+                        {
+                            rowCss = "budget-exceeded";
+                        }
+                        else if (row.BudgetStatus == BudgetStatus.Nearing)
+                        {
+                            rowCss = "budget-nearing";
+                        }
+
+                        <tr class="@rowCss">
+
+                            <td>@row.Department</td>
+
+                            <td>@row.Campaign</td>
+
+                            <td>@row.Vendor</td>
+
+                            <td>
+                                @(row.TotalAttempts.HasValue ? row.TotalAttempts.Value.ToString("N0") : "—")
+                            </td>
+
+                            <td>
+                                @(row.UniqueBase.HasValue
+                                    ? row.UniqueBase.Value.ToString("N0")
+                                    : "—")
+                            </td>
+
+                            <td>
+                                @(row.AttemptIntensity.HasValue ? row.AttemptIntensity.Value.ToString("F2") : "—")
+                            </td>
+
+                            <td>
+                                @(row.TotalConnects.HasValue ? row.TotalConnects.Value.ToString("N0") : "—")
+                            </td>
+
+                            <td>
+                                @(row.UniqueConnects.HasValue ? row.UniqueConnects.Value.ToString("N0") : "—")
+                            </td>
+
+                            <td>
+                                @(row.ConnectIntensity.HasValue ? row.ConnectIntensity.Value.ToString("F2") : "—")
+                            </td>
+
+                            <td>
+                                @(row.Mou.HasValue ? row.Mou.Value.ToString("N0") : "—")
+                            </td>
+
+                            <td>
+                                @(row.RunningCost.HasValue ? row.RunningCost.Value.ToString("N2") : "—")
+                            </td>
+
+                            <td>
+                                <span title="CAC will be calculated after total disbursement data is available">—</span>
+                            </td>
+
+                            <td>
+                                @if (row.BudgetBurnPercentage.HasValue)
+                                {
+                                    <span>@(Math.Round(row.BudgetBurnPercentage.Value, 0).ToString("N0"))%</span>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="usage-row-count">
+        Currently displaying @rows.Count row(s)
+    </div>
+
+    <div class="usage-export-actions">
+        <a class="usage-export-button"
+           href="@Url.Action("Export", "Usage")">
+            Export
+        </a>
+    </div>
+
+</div>
